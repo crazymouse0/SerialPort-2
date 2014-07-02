@@ -15,8 +15,6 @@ namespace SerialTestUI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private bool _firstTime = true;
-
         #region Properties
         public SerialPortService SerialPortService { get; set; }
 
@@ -142,6 +140,13 @@ namespace SerialTestUI.ViewModels
             else if (com == "SWITCH_OFF_LIGHT" && action == "EXECUTED")
             {
                 this.LedOn = false;
+            }
+            else if (com == "BTN" && action == "PRESSED")
+            {
+                if (!LedOn)
+                    SerialPortService.SendData("SWITCH_ON_LIGHT");
+                else
+                    SerialPortService.SendData("SWITCH_OFF_LIGHT");
             }
         }
         #region Methods
