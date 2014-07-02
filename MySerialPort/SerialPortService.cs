@@ -62,7 +62,7 @@ namespace MySerialPort
         }
         public void SendData(string data)
         {
-            _serialPort.Write(data);
+            _serialPort.WriteLine(data);
             DataSend(data);
         }
         private void listen()

@@ -84,7 +84,11 @@ namespace SerialTestUI.ViewModels
 
             SerialPortService.DataReceived += (s) =>
             {
-                InGoingComm = s + Environment.NewLine + InGoingComm;
+                var com = s.Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
+                InGoingComm = com + Environment.NewLine + InGoingComm;
+
+                //Check Commands
+                analyseReturnCommand(com);
             };
             SerialPortService.DataSend += (s) => {
                 OutGoingComm = s + Environment.NewLine + OutGoingComm;
@@ -118,11 +122,28 @@ namespace SerialTestUI.ViewModels
             });
             LedToggle = new RelayCommand(() =>
             {
-                SerialPortService.SendData("SWITCH_ON_LIGHT");
+                if (!LedOn)
+                    SerialPortService.SendData("SWITCH_ON_LIGHT");
+                else
+                    SerialPortService.SendData("SWITCH_OFF_LIGHT");
             });
             #endregion
         }
-
+        private void analyseReturnCommand(string command)
+        {
+            //Aufbau <command>:<action>
+            var ps = command.Split(':');
+            var com = ps[0].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
+            var action = ps[1].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
+            if (com == "SWITCH_ON_LIGHT" && action == "EXECUTED")
+            {
+                this.LedOn = true;
+            }
+            else if (com == "SWITCH_OFF_LIGHT" && action == "EXECUTED")
+            {
+                this.LedOn = false;
+            }
+        }
         #region Methods
 
         #endregion
