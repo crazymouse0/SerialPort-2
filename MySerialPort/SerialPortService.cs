@@ -15,6 +15,7 @@ namespace MySerialPort
         private Thread _listenThread;
 
         #region Properties
+        public bool ComIsOpen { get; set; }
         public string PortName { get; set; }
         public int BaudRate { get; set; }
         public Parity Parity { get; set; }
@@ -39,7 +40,7 @@ namespace MySerialPort
             _serialPort = new SerialPort();
             setDefaultValues();
 
-            _listenThread = new Thread(listen) { IsBackground = true };
+            ComIsOpen = false;
         }
 
         #region Methods
@@ -48,17 +49,20 @@ namespace MySerialPort
             prepareForStart();
             _continue = true;
             _serialPort.Open();
+            _listenThread = new Thread(listen) { IsBackground = true };
             _listenThread.Start();
+            ComIsOpen = true;
         }
         public void Stop()
         {
             _continue = false;
             _listenThread.Join();
             _serialPort.Close();
+            ComIsOpen = false;
         }
         public void SendData(string data)
         {
-            _serialPort.WriteLine(data);
+            _serialPort.Write(data);
             DataSend(data);
         }
         private void listen()

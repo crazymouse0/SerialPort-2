@@ -2,79 +2,27 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:SerialTestUI.ViewModels"
+        xmlns:conv="clr-namespace:SerialTestUI.Converters"
         Title="MainWindow" Height="350" Width="605">
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <conv:BoolToFillConverter x:Key="BoolToFillConv" />
+    </Window.Resources>
     <StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
             <StackPanel>
                 <TextBlock Text="COM Port" />
-                <ComboBox ItemsSource="{Binding SerialPortService.AvailableCOMPorts}" 
+                <ComboBox ItemsSource="{Binding PortNames}" 
                          IsSynchronizedWithCurrentItem="True"
-                         SelectedItem="{Binding PortName}">
+                         SelectedItem="{Binding PortName, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Mode=OneWay}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Baud Rate" />
-                <TextBox Text="{Binding BaudRate}" 
-                         Margin="0 3 0 0"/>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Parity" />
-                <ComboBox ItemsSource="{Binding SerialPortService.AvailableParities}" 
-                         IsSynchronizedWithCurrentItem="True"
-                         SelectedItem="{Binding Parity}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Mode=OneWay}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Data Bits" />
-                <TextBox Text="{Binding DataBits}" 
-                         Margin="0 3 0 0"/>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Stop Bits" />
-                <ComboBox ItemsSource="{Binding SerialPortService.AvailableStopBits}" 
-                         IsSynchronizedWithCurrentItem="True"
-                         SelectedItem="{Binding StopBits}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Mode=OneWay}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Handshake" />
-                <ComboBox ItemsSource="{Binding SerialPortService.AvailableHandshakes}" 
-                         IsSynchronizedWithCurrentItem="True"
-                         SelectedItem="{Binding Handshake}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Mode=OneWay}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Read Timeout" />
-                <TextBox Text="{Binding ReadTimout}" 
-                         Margin="0 3 0 0"/>
-            </StackPanel>
-            <StackPanel Margin="10 0 0 0">
-                <TextBlock Text="Write Timeout" />
-                <TextBox Text="{Binding WriteTimeout}" 
-                         Margin="0 3 0 0"/>
             </StackPanel>
         </StackPanel>
         <Grid Margin="0 10 0 0">
@@ -87,10 +35,10 @@
             <Button Grid.Column="1" Content="Open"
                     Margin="0 0 10 0"
                     Width="100" 
-                    Command="{Binding Start}"
-                    />
+                    Command="{Binding Start}" />
             <Button Grid.Column="2" Content="Close" 
-                    Width="100"/>
+                    Width="100"
+                    Command="{Binding Stop}"/>
         </Grid>
         <Grid Margin="0 10 0 0">
             <Grid.ColumnDefinitions>
@@ -99,17 +47,23 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="Ausgehende Kommunikation"/>
-                <TextBlock Text="{Binding OutGoingComm}" 
+                <TextBlock Text="{Binding OutGoingComm, Mode=TwoWay}" 
                            MinHeight="70" TextWrapping="Wrap"/>
             </StackPanel>
             <StackPanel Grid.Column="1">
                 <TextBlock Text="Eingehende Kommunikation"/>
-                <TextBlock Text="{Binding InComingCom}" 
+                <TextBlock Text="{Binding InGoingComm, Mode=TwoWay}" 
                            MinHeight="70" TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-            <Button Content="Led ein/aus" />
+            <StackPanel>
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding LedOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Led ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding LedToggle}"/>
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </Window>

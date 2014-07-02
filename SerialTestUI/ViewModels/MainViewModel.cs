@@ -8,12 +8,15 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace SerialTestUI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private bool _firstTime = true;
+
         #region Properties
         public SerialPortService SerialPortService { get; set; }
 
@@ -30,90 +33,8 @@ namespace SerialTestUI.ViewModels
                 Set<string>(() => PortName, ref _portName, value, true);
             }
         }
-        private int _baudRate;
-        public int BaudRate
-        {
-            get
-            {
-                return _baudRate;
-            }
-            set
-            {
-                Set<int>(() => BaudRate, ref _baudRate, value, true);
-            }
-        }
-        private Parity _parity;
-        public Parity Parity
-        {
-            get
-            {
-                return _parity;
-            }
-            set
-            {
-                Set<Parity>(() => Parity, ref _parity, value, true);
-            }
-        }
-        private int _dataBits;
-        public int DataBits
-        {
-            get
-            {
-                return _dataBits;
-            }
-            set
-            {
-                Set<int>(() => DataBits, ref _dataBits, value, true);
-            }
-        }
-        private StopBits _stopBits;
-        public StopBits StopBits
-        {
-            get
-            {
-                return _stopBits;
-            }
-            set
-            {
-                Set<StopBits>(() => StopBits, ref _stopBits, value, true);
-            }
-        }
-        private Handshake _handShake;
-        public Handshake HandShake
-        {
-            get
-            {
-                return _handShake;
-            }
-            set
-            {
-                Set<Handshake>(() => HandShake, ref _handShake, value, true);
-            }
-        }
-        private int _readTimeout;
-        public int ReadTimout
-        {
-            get
-            {
-                return _readTimeout;
-            }
-            set
-            {
-                Set<int>(() => ReadTimout, ref _readTimeout, value, true);
-            }
-        }
-        private int _writeTimeout;
-        public int WriteTimeout
-        {
-            get
-            {
-                return _writeTimeout;
-            }
-            set
-            {
-                Set<int>(() => WriteTimeout, ref _writeTimeout, value, true);
-            }
-        }
+        
+        public CollectionView PortNames { get; set; }
         #endregion
 
         private string _outGoingComm;
@@ -140,7 +61,18 @@ namespace SerialTestUI.ViewModels
                 Set<string>(() => InGoingComm, ref _inGoingComm, value);
             }
         }
-
+        private bool _ledOn;
+        public bool LedOn
+        {
+            get
+            {
+                return _ledOn;
+            }
+            set
+            {
+                Set<bool>(() => LedOn, ref _ledOn, value);
+            }
+        }
         public RelayCommand Start { get; set; }
         public RelayCommand Stop { get; set; }
         public RelayCommand LedToggle { get; set; }
@@ -159,14 +91,9 @@ namespace SerialTestUI.ViewModels
             };
 
             #region SerialPortConfiguration
+            this.PortNames = new CollectionView(SerialPortService.AvailableCOMPorts);
+
             this.PortName = SerialPortService.PortName;
-            this.BaudRate = SerialPortService.BaudRate;
-            this.Parity = SerialPortService.Parity;
-            this.DataBits = SerialPortService.DataBits;
-            this.StopBits = SerialPortService.StopBits;
-            this.HandShake = SerialPortService.Handshake;
-            this.ReadTimout = SerialPortService.ReadTimeout;
-            this.WriteTimeout = SerialPortService.WriteTimeout;
 
             Messenger.Default.Register<PropertyChangedMessage<string>>(this, (a) => {
                 if (a.PropertyName == "PortName")
@@ -174,39 +101,20 @@ namespace SerialTestUI.ViewModels
                     SerialPortService.PortName = a.NewValue;
                 }
             });
-            Messenger.Default.Register<PropertyChangedMessage<int>>(this, (a) =>
-            {
-                if (a.PropertyName == "BaudRate")
-                {
-                    SerialPortService.BaudRate = a.NewValue;
-                }
-                else if (a.PropertyName == "DataBits")
-                {
-                    SerialPortService.DataBits = a.NewValue;
-                }
-            });
-            Messenger.Default.Register<PropertyChangedMessage<Parity>>(this, (a) =>
-            {
-                SerialPortService.Parity = a.NewValue;
-            });
-            Messenger.Default.Register<PropertyChangedMessage<StopBits>>(this, (a) =>
-            {
-                SerialPortService.StopBits = a.NewValue;
-            });
-            Messenger.Default.Register<PropertyChangedMessage<Handshake>>(this, (a) =>
-            {
-                SerialPortService.Handshake = a.NewValue;
-            });
             #endregion
 
             #region Commands
             Start = new RelayCommand(() =>
             {
                 SerialPortService.Start();
+            }, () => { 
+                return !SerialPortService.ComIsOpen;
             });
             Stop = new RelayCommand(() =>
             {
                 SerialPortService.Stop();
+            }, () => {
+                return SerialPortService.ComIsOpen;
             });
             LedToggle = new RelayCommand(() =>
             {
