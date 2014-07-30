@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:SerialTestUI.ViewModels"
         xmlns:conv="clr-namespace:SerialTestUI.Converters"
-        Title="MainWindow" Height="350" Width="605">
+        Title="MainWindow" Height="474.035" Width="605">
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
@@ -59,10 +59,87 @@
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
             <StackPanel>
                 <Ellipse Width="20" Height="20"
-                         Fill="{Binding LedOn, Converter={StaticResource BoolToFillConv}}"/>
-                <Button Content="Led ein/aus"
+                         Fill="{Binding RegnerOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Regner ein/aus"
                         Margin="0 10 0 0"
-                    Command="{Binding LedToggle}"/>
+                    Command="{Binding RegnerToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding SprueherOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Sprüher ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding SprueherToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding TropferOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Tropfer ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding TropferToggle}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+            <StackPanel>
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding OnRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="On Relais ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding OnRelaisToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding OneRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Relais 1 ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding OneRelaisToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding TwoRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Relais 2 ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding TwoRelaisToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding ThreeRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Relais 3 ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding ThreeRelaisToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding VentilRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Ventil Wasser/Zisterne"
+                        Margin="0 10 0 0"
+                    Command="{Binding VentilRelaisToggle}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+            <StackPanel>
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding ManualRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Manual Relais ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding ManualRelaisToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding PumpeRelaisOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Pumpe ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding PumpeRelaisToggle}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Label Content="Wasserstand Ok" />
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding WasserstandOk, Converter={StaticResource BoolToFillConv}}"/>
+            </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Label Content="Hand Taster" />
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding HandTasterPressed, Converter={StaticResource BoolToFillConv}}"/>
             </StackPanel>
         </StackPanel>
     </StackPanel>
