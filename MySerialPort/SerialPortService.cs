@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MySerialPort.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -64,6 +66,11 @@ namespace MySerialPort
         {
             _serialPort.WriteLine(data);
             DataSend(data);
+        }
+        public void SendData(CommunicationModel data)
+        {
+            var sendData = JsonConvert.SerializeObject(data);
+            SendData(sendData);
         }
         private void listen()
         {

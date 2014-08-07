@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using MySerialPort;
+using MySerialPort.Models;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -265,6 +266,8 @@ namespace SerialTestUI.ViewModels
             Start = new RelayCommand(() =>
             {
                 SerialPortService.Start();
+                OutGoingComm = String.Empty;
+                InGoingComm = String.Empty;
             }, () =>
             {
                 return !SerialPortService.ComIsOpen;
@@ -279,165 +282,166 @@ namespace SerialTestUI.ViewModels
             RegnerToggle = new RelayCommand(() =>
             {
                 if (!RegnerOn)
-                    SerialPortService.SendData("REGNER_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "REGNER", Action = "ON" });
                 else
-                    SerialPortService.SendData("REGNER_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "REGNER", Action = "OFF" });
             });
             SprueherToggle = new RelayCommand(() =>
             {
                 if (!SprueherOn)
-                    SerialPortService.SendData("SPRUEHER_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "SPRUEHER", Action = "ON" });
                 else
-                    SerialPortService.SendData("SPRUEHER_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "SPRUEHER", Action = "OFF" });
             });
             TropferToggle = new RelayCommand(() =>
             {
                 if (!TropferOn)
-                    SerialPortService.SendData("TROPFER_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "TROPFER", Action = "ON" });
                 else
-                    SerialPortService.SendData("TROPFER_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "TROPFER", Action = "OFF" });
             });
             ManualToggle = new RelayCommand(() =>
             {
                 if (!ManualOn)
-                    SerialPortService.SendData("MANUAL_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "MANUAL", Action = "ON" });
                 else
-                    SerialPortService.SendData("MANUAL_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "MANUAL", Action = "OFF" });
             });
             OnRelaisToggle = new RelayCommand(() =>
             {
                 if (!OnRelaisOn)
-                    SerialPortService.SendData("ONRELAIS_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "ONRELAIS", Action = "ON" });
                 else
-                    SerialPortService.SendData("ONRELAIS_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "ONRELAIS", Action = "OFF" });
             });
             OneRelaisToggle = new RelayCommand(() =>
             {
                 if (!OneRelaisOn)
-                    SerialPortService.SendData("ONERELAIS_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "ONERELAIS", Action = "ON" });
                 else
-                    SerialPortService.SendData("ONERELAIS_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "ONERELAIS", Action = "OFF" });
             });
             TwoRelaisToggle = new RelayCommand(() =>
             {
                 if (!TwoRelaisOn)
-                    SerialPortService.SendData("TWORELAIS_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "TWORELAIS", Action = "ON" });
                 else
-                    SerialPortService.SendData("TWORELAIS_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "TWORELAIS", Action = "OFF" });
             });
             ThreeRelaisToggle = new RelayCommand(() =>
             {
                 if (!ThreeRelaisOn)
-                    SerialPortService.SendData("THREERELAIS_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "THREERELAIS", Action = "ON" });
                 else
-                    SerialPortService.SendData("THREERELAIS_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "THREERELAIS", Action = "OFF" });
             });
             VentilRelaisToggle = new RelayCommand(() =>
             {
                 if (!VentilRelaisOn)
-                    SerialPortService.SendData("VENTILRELAIS_WATER");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "VENTILRELAIS", Action = "WATER" });
                 else
-                    SerialPortService.SendData("VENTILRELAIS_ZISTERNE");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "VENTILRELAIS", Action = "ZISTERNE" });
             });
             ManualRelaisToggle = new RelayCommand(() =>
             {
                 if (!ManualRelaisOn)
-                    SerialPortService.SendData("MANUALRELAIS_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "MANUALRELAIS", Action = "ON" });
                 else
-                    SerialPortService.SendData("MANUALRELAIS_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "MANUALRELAIS", Action = "OFF" });
             });
             PumpeRelaisToggle = new RelayCommand(() =>
             {
                 if (!PumpeRelaisOn)
-                    SerialPortService.SendData("PUMPERELAIS_ON");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "PUMPERELAIS", Action = "ON" });
                 else
-                    SerialPortService.SendData("PUMPERELAIS_OFF");
+                    SerialPortService.SendData(new CommunicationModel() { Command = "PUMPERELAIS", Action = "OFF" });
             });
             #endregion
         }
         private void analyseReturnCommand(string command)
         {
-            //Aufbau <command>:<action>
-            var ps = command.Split(':');
+            //Aufbau <command>_<action>_<OK/NOK>
+            var ps = command.Split('_');
             var com = ps[0].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
             var action = ps[1].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
-            if (com == "REGNER_ON" && action == "EXECUTED")
+            var status = ps[2].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
+            if (com == "REGNER" && action == "ON" && status == "OK")
             {
                 this.RegnerOn = true;
             }
-            else if (com == "REGNER_OFF" && action == "EXECUTED")
+            else if (com == "REGNER" && action == "OFF" && status == "OK")
             {
                 this.RegnerOn = false;
             }
-            else if (com == "SPRUEHER_ON" && action == "EXECUTED")
+            else if (com == "SPRUEHER" && action == "ON" && status == "OK")
             {
                 this.SprueherOn = true;
             }
-            else if (com == "SPRUEHER_OFF" && action == "EXECUTED")
+            else if (com == "SPRUEHER" && action == "OFF" && status == "OK")
             {
                 this.SprueherOn = false;
             }
-            else if (com == "TROPFER_ON" && action == "EXECUTED")
+            else if (com == "TROPFER" && action == "ON" && status == "OK")
             {
                 this.TropferOn = true;
             }
-            else if (com == "TROPFER_OFF" && action == "EXECUTED")
+            else if (com == "TROPFER" && action == "OFF" && status == "OK")
             {
                 this.TropferOn = false;
             }
-            else if (com == "ONRELAIS_ON" && action == "EXECUTED")
+            else if (com == "ONRELAIS" && action == "ON" && status == "OK")
             {
                 this.OnRelaisOn = true;
             }
-            else if (com == "ONRELAIS_OFF" && action == "EXECUTED")
+            else if (com == "ONRELAIS" && action == "OFF" && status == "OK")
             {
                 this.OnRelaisOn = false;
             }
-            else if (com == "ONERELAIS_ON" && action == "EXECUTED")
+            else if (com == "ONERELAIS" && action == "ON" && status == "OK")
             {
                 this.OneRelaisOn = true;
             }
-            else if (com == "ONERELAIS_OFF" && action == "EXECUTED")
+            else if (com == "ONERELAIS" && action == "OFF" && status == "OK")
             {
                 this.OneRelaisOn = false;
             }
-            else if (com == "TWORELAIS_ON" && action == "EXECUTED")
+            else if (com == "TWORELAIS" && action == "ON" && status == "OK")
             {
                 this.TwoRelaisOn = true;
             }
-            else if (com == "TWORELAIS_OFF" && action == "EXECUTED")
+            else if (com == "TWORELAIS" && action == "OFF" && status == "OK")
             {
                 this.TwoRelaisOn = false;
             }
-            else if (com == "THREERELAIS_ON" && action == "EXECUTED")
+            else if (com == "THREERELAIS" && action == "ON" && status == "OK")
             {
                 this.ThreeRelaisOn = true;
             }
-            else if (com == "THREERELAIS_OFF" && action == "EXECUTED")
+            else if (com == "THREERELAIS" && action == "OFF" && status == "OK")
             {
                 this.ThreeRelaisOn = false;
             }
-            else if (com == "VENTILRELAIS_WATER" && action == "EXECUTED")
+            else if (com == "VENTILRELAIS" && action == "WATER" && status == "OK")
             {
                 this.VentilRelaisOn = true;
             }
-            else if (com == "VENTILRELAIS_ZISTERNE" && action == "EXECUTED")
+            else if (com == "VENTILRELAIS" && action == "ZISTERNE" && status == "OK")
             {
                 this.VentilRelaisOn = false;
             }
-            else if (com == "MANUALRELAIS_ON" && action == "EXECUTED")
+            else if (com == "MANUALRELAIS" && action == "ON" && status == "OK")
             {
                 this.ManualRelaisOn = true;
             }
-            else if (com == "MANUALRELAIS_OFF" && action == "EXECUTED")
+            else if (com == "MANUALRELAIS" && action == "OFF" && status == "OK")
             {
                 this.ManualRelaisOn = false;
             }
-            else if (com == "PUMPERELAIS_ON" && action == "EXECUTED")
+            else if (com == "PUMPERELAIS" && action == "ON" && status == "OK")
             {
                 this.PumpeRelaisOn = true;
             }
-            else if (com == "PUMPERELAIS_OFF" && action == "EXECUTED")
+            else if (com == "PUMPERELAIS" && action == "OFF" && status == "OK")
             {
                 this.PumpeRelaisOn = false;
             }
