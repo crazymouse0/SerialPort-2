@@ -95,6 +95,18 @@ namespace SerialTestUI.ViewModels
                 Set<bool>(() => TropferOn, ref _tropferOn, value);
             }
         }
+        private bool _manualOn;
+        public bool ManualOn
+        {
+            get
+            {
+                return _manualOn;
+            }
+            set
+            {
+                Set<bool>(() => ManualOn, ref _manualOn, value);
+            }
+        }
         private bool _onRelaisOn;
         public bool OnRelaisOn
         {
@@ -208,6 +220,7 @@ namespace SerialTestUI.ViewModels
         public RelayCommand RegnerToggle { get; set; }
         public RelayCommand SprueherToggle { get; set; }
         public RelayCommand TropferToggle { get; set; }
+        public RelayCommand ManualToggle { get; set; }
         public RelayCommand OnRelaisToggle { get; set; }
         public RelayCommand VentilRelaisToggle { get; set; }
         public RelayCommand ManualRelaisToggle { get; set; }
@@ -283,6 +296,13 @@ namespace SerialTestUI.ViewModels
                     SerialPortService.SendData("TROPFER_ON");
                 else
                     SerialPortService.SendData("TROPFER_OFF");
+            });
+            ManualToggle = new RelayCommand(() =>
+            {
+                if (!ManualOn)
+                    SerialPortService.SendData("MANUAL_ON");
+                else
+                    SerialPortService.SendData("MANUAL_OFF");
             });
             OnRelaisToggle = new RelayCommand(() =>
             {

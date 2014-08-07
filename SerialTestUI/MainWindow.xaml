@@ -78,6 +78,13 @@
                         Margin="0 10 0 0"
                     Command="{Binding TropferToggle}"/>
             </StackPanel>
+            <StackPanel Margin="20 0 0 0">
+                <Ellipse Width="20" Height="20"
+                         Fill="{Binding ManualOn, Converter={StaticResource BoolToFillConv}}"/>
+                <Button Content="Hand ein/aus"
+                        Margin="0 10 0 0"
+                    Command="{Binding ManualToggle}"/>
+            </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
             <StackPanel>
