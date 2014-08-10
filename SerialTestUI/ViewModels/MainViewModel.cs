@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using MySerialPort;
 using MySerialPort.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -216,6 +217,18 @@ namespace SerialTestUI.ViewModels
                 Set<bool>(() => HandTasterPressed, ref _handTasterPressed, value);
             }
         }
+        private string _errorBox;
+        public string ErrorBox
+        {
+            get
+            {
+                return _errorBox;
+            }
+            set
+            {
+                Set<string>(() => ErrorBox, ref _errorBox, value);
+            }
+        }
         public RelayCommand Start { get; set; }
         public RelayCommand Stop { get; set; }
         public RelayCommand RegnerToggle { get; set; }
@@ -360,109 +373,122 @@ namespace SerialTestUI.ViewModels
         }
         private void analyseReturnCommand(string command)
         {
-            //Aufbau <command>_<action>_<OK/NOK>
-            var ps = command.Split('_');
-            var com = ps[0].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
-            var action = ps[1].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
-            var status = ps[2].Trim().Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
-            if (com == "REGNER" && action == "ON" && status == "OK")
+            try
             {
-                this.RegnerOn = true;
-            }
-            else if (com == "REGNER" && action == "OFF" && status == "OK")
-            {
-                this.RegnerOn = false;
-            }
-            else if (com == "SPRUEHER" && action == "ON" && status == "OK")
-            {
-                this.SprueherOn = true;
-            }
-            else if (com == "SPRUEHER" && action == "OFF" && status == "OK")
-            {
-                this.SprueherOn = false;
-            }
-            else if (com == "TROPFER" && action == "ON" && status == "OK")
-            {
-                this.TropferOn = true;
-            }
-            else if (com == "TROPFER" && action == "OFF" && status == "OK")
-            {
-                this.TropferOn = false;
-            }
-            else if (com == "ONRELAIS" && action == "ON" && status == "OK")
-            {
-                this.OnRelaisOn = true;
-            }
-            else if (com == "ONRELAIS" && action == "OFF" && status == "OK")
-            {
-                this.OnRelaisOn = false;
-            }
-            else if (com == "ONERELAIS" && action == "ON" && status == "OK")
-            {
-                this.OneRelaisOn = true;
-            }
-            else if (com == "ONERELAIS" && action == "OFF" && status == "OK")
-            {
-                this.OneRelaisOn = false;
-            }
-            else if (com == "TWORELAIS" && action == "ON" && status == "OK")
-            {
-                this.TwoRelaisOn = true;
-            }
-            else if (com == "TWORELAIS" && action == "OFF" && status == "OK")
-            {
-                this.TwoRelaisOn = false;
-            }
-            else if (com == "THREERELAIS" && action == "ON" && status == "OK")
-            {
-                this.ThreeRelaisOn = true;
-            }
-            else if (com == "THREERELAIS" && action == "OFF" && status == "OK")
-            {
-                this.ThreeRelaisOn = false;
-            }
-            else if (com == "VENTILRELAIS" && action == "WATER" && status == "OK")
-            {
-                this.VentilRelaisOn = true;
-            }
-            else if (com == "VENTILRELAIS" && action == "ZISTERNE" && status == "OK")
-            {
-                this.VentilRelaisOn = false;
-            }
-            else if (com == "MANUALRELAIS" && action == "ON" && status == "OK")
-            {
-                this.ManualRelaisOn = true;
-            }
-            else if (com == "MANUALRELAIS" && action == "OFF" && status == "OK")
-            {
-                this.ManualRelaisOn = false;
-            }
-            else if (com == "PUMPERELAIS" && action == "ON" && status == "OK")
-            {
-                this.PumpeRelaisOn = true;
-            }
-            else if (com == "PUMPERELAIS" && action == "OFF" && status == "OK")
-            {
-                this.PumpeRelaisOn = false;
-            }
-            else if (com == "INFO")
-            {
-                if (action == "WASSERSTAND_OK")
+                if (command == String.Empty) return;
+
+                var comData = JsonConvert.DeserializeObject<CallbackCommunicationModel>(command);
+
+                if (comData.Type == "INFO")
                 {
-                    this.WasserstandOk = true;
+                    if (comData.Command == "REGNER" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.RegnerOn = true;
+                    }
+                    else if (comData.Command == "REGNER" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.RegnerOn = false;
+                    }
+                    else if (comData.Command == "SPRUEHER" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.SprueherOn = true;
+                    }
+                    else if (comData.Command == "SPRUEHER" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.SprueherOn = false;
+                    }
+                    else if (comData.Command == "TROPFER" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.TropferOn = true;
+                    }
+                    else if (comData.Command == "TROPFER" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.TropferOn = false;
+                    }
+                    else if (comData.Command == "ONRELAIS" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.OnRelaisOn = true;
+                    }
+                    else if (comData.Command == "ONRELAIS" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.OnRelaisOn = false;
+                    }
+                    else if (comData.Command == "ONERELAIS" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.OneRelaisOn = true;
+                    }
+                    else if (comData.Command == "ONERELAIS" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.OneRelaisOn = false;
+                    }
+                    else if (comData.Command == "TWORELAIS" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.TwoRelaisOn = true;
+                    }
+                    else if (comData.Command == "TWORELAIS" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.TwoRelaisOn = false;
+                    }
+                    else if (comData.Command == "THREERELAIS" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.ThreeRelaisOn = true;
+                    }
+                    else if (comData.Command == "THREERELAIS" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.ThreeRelaisOn = false;
+                    }
+                    else if (comData.Command == "VENTILRELAIS" && comData.Action == "WATER" && comData.Status == "OK")
+                    {
+                        this.VentilRelaisOn = true;
+                    }
+                    else if (comData.Command == "VENTILRELAIS" && comData.Action == "ZISTERNE" && comData.Status == "OK")
+                    {
+                        this.VentilRelaisOn = false;
+                    }
+                    else if (comData.Command == "MANUALRELAIS" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.ManualRelaisOn = true;
+                    }
+                    else if (comData.Command == "MANUALRELAIS" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.ManualRelaisOn = false;
+                    }
+                    else if (comData.Command == "PUMPERELAIS" && comData.Action == "ON" && comData.Status == "OK")
+                    {
+                        this.PumpeRelaisOn = true;
+                    }
+                    else if (comData.Command == "PUMPERELAIS" && comData.Action == "OFF" && comData.Status == "OK")
+                    {
+                        this.PumpeRelaisOn = false;
+                    }
                 }
-                else if (action == "WASSERSTAND_NOK")
+                else if (comData.Type == "ERROR")
                 {
-                    this.WasserstandOk = false;
+                    ErrorBox = "Error on device: " + comData.Message;
                 }
-                else if (action == "MANUAL_PRESSED")
-                {
-                    this.HandTasterPressed = true;
-                }
-                else if (action == "MANUAL_NOT_PRESSED")
-                {
-                    this.HandTasterPressed = false;
-                }
+                //else if (com == "INFO")
+                //{
+                //    if (action == "WASSERSTAND_OK")
+                //    {
+                //        this.WasserstandOk = true;
+                //    }
+                //    else if (action == "WASSERSTAND_NOK")
+                //    {
+                //        this.WasserstandOk = false;
+                //    }
+                //    else if (action == "MANUAL_PRESSED")
+                //    {
+                //        this.HandTasterPressed = true;
+                //    }
+                //    else if (action == "MANUAL_NOT_PRESSED")
+                //    {
+                //        this.HandTasterPressed = false;
+                //    }
+                //}
+            }
+            catch (Exception ex)
+            {
+                ErrorBox = ex.Message;
             }
         }
         #region Methods

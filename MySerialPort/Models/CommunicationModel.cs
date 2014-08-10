@@ -10,6 +10,6 @@ namespace MySerialPort.Models
     {
         public string Command { get; set; }
         public string Action { get; set; }
-        public CommunicationParameter[] Parameters { get; set; }
+        //public CommunicationParameter[] Parameters { get; set; }
     }
 }

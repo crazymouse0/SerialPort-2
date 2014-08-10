@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\CallbackCommunicationModel.cs" />
     <Compile Include="Models\CommunicationModel.cs" />
     <Compile Include="Models\CommunicationParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

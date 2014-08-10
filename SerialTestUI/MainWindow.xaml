@@ -149,5 +149,6 @@
                          Fill="{Binding HandTasterPressed, Converter={StaticResource BoolToFillConv}}"/>
             </StackPanel>
         </StackPanel>
+        <TextBlock Text="{Binding ErrorBox}" />
     </StackPanel>
 </Window>
